@@ -33,17 +33,3 @@
         # Visa "Boken sparad!" i etiketten
     # Om databasfel uppstår:
         # Visa felmeddelande i etiketten
-
-# Visa böcker (tar emot sökord, tomt som standard)
-# Om sökord är tomt:
-    # Hämta alla böcker från databasen
-# Annars:
-    # Hämta böcker där titeln matchar sökordet (med % för delträff)
-# Bygg en text av alla träffar, rad för rad, med id, titel, författare, år, status
-# Visa texten i etiketten
-# Hämta alla träffar från databasen (fetchall)
-# Bygg en textrad för varje träff, med id, titel, författare, år, status
-# Slå ihop alla rader till en text
-
-
-# Ta bort bok
