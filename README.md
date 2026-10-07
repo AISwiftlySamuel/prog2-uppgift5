@@ -1,100 +1,137 @@
-Mitt Bibliotek
-==============
+# Mitt Bibliotek
 
-Python-program med grafiskt gränssnitt (tkinter) för att söka bokinfo via Open
-Library API, spara böcker i en lokal SQLite-databas, och visa/söka/ta bort dem.
+Ett Python-program med grafiskt gränssnitt för att söka efter böcker via Open Library API, spara bokinformation lokalt i en SQLite-databas samt visa, filtrera och ta bort sparade poster.
 
-Lärarbedömd uppgift 5, Programmering nivå 2.
-Samuel Augsburger, augusti 2026.
+Projektet utvecklades inom **Programmering nivå 2** och kombinerar grafiskt gränssnitt, API-kommunikation och databaslagring i en sammanhängande applikation.
 
-Kod publicerad på GitHub: https://github.com/AISwiftlySamuel/prog2-uppgift5
+## Funktioner
 
+- Söker efter en boktitel via Open Library API.
+- Hämtar titel, författare och utgivningsår.
+- Låter användaren välja lässtatus, exempelvis *Vill läsa*.
+- Sparar bokinformationen i en lokal SQLite-databas.
+- Visar alla sparade böcker eller filtrerar resultat efter sökord.
+- Tar bort en bok med hjälp av postens id.
+- Hanterar saknade API-fält och vanliga fel med tydliga reservvärden och undantagshantering.
 
-Syfte
------
+## Teknik
 
-Ett personligt bokregister. Man söker på en titel, programmet hämtar riktig
-titel, författare och utgivningsår från Open Library, man väljer en status
-(t.ex. "Vill läsa") och sparar boken lokalt.
+- **Python**
+- **tkinter** för grafiskt användargränssnitt
+- **requests** för API-anrop
+- **SQLite / sqlite3** för lokal datalagring
+- **Open Library API** för bokdata
+- **Visual Studio Code** som utvecklingsmiljö
+- **GitHub** för versionshantering och publicering
 
+## Projektstruktur
 
-Funktioner
-----------
+Programmet är uppdelat i fyra huvudsakliga funktioner:
 
-Hämta bok - söker en boktitel via API, visar titel, författare och år.
-Spara bok - sparar senast hämtade bok (titel, författare, år, status) i databasen.
-Visa böcker - visar alla sparade böcker, eller filtrerar om man skriver ett sökord.
-Ta bort bok - tar bort en sparad bok via dess id.
+- `hamta_bok()` hämtar bokinformation från API:t.
+- `spara_bok()` sparar senast hämtade bok i databasen.
+- `visa_bocker()` visar eller filtrerar sparade böcker.
+- `ta_bort_bok()` tar bort en bok utifrån dess id.
 
+Funktionerna har docstrings. API-anrop och databasoperationer omges av `try`/`except` för att hantera nätverksfel, databasfel och ofullständiga API-svar.
 
-Hur man kör programmet
------------------------
+## Så körs programmet
 
-1. Aktivera venv, se till att requests är installerat (pip install requests).
-2. Kör lararbedomd-uppgift-5.py, t.ex. via VS Codes "Run Python File".
-3. Skriv en boktitel, klicka Hämta bok.
-4. Välj status i rullgardinen, klicka Spara bok.
-5. Klicka Visa böcker för att se sparade böcker (tomt sökfält visar alla).
-6. Skriv ett bok-id, klicka Ta bort bok för att ta bort den.
+### 1. Klona repot
 
-Databasfilen bibliotek.db skapas automatiskt första gången programmet körs.
+```bash
+git clone https://github.com/AISwiftlySamuel/prog2-uppgift5.git
+cd prog2-uppgift5
+```
 
+### 2. Skapa och aktivera en virtuell miljö
 
-Teknisk struktur
------------------
+```bash
+python -m venv .venv
+```
 
-tkinter för gränssnittet, requests för API-anropet, sqlite3 för lagring.
+På macOS eller Linux:
 
-Koden är uppdelad i fyra funktioner (hamta_bok, spara_bok, visa_bocker,
-ta_bort_bok), var och en med en docstring. Try/except runt både API-anrop och
-databasoperationer.
+```bash
+source .venv/bin/activate
+```
 
-Open Library svarar med nästlad JSON (en lista av träffar, där varje träff
-innehåller listor, t.ex. för författarnamn). I hamta_bok plockas rätt fält ut
-med .get(), som skyddar mot att API-svaret saknar ett fält.
+På Windows:
 
+```powershell
+.venv\Scripts\activate
+```
 
-Reflektion
-----------
+### 3. Installera beroendet
 
-Det här var den mest omfattande uppgiften hittills i kursen - första gången
-jag kombinerat GUI, API och databas i samma program. Jag körde miniuppgift 5.6
-(ett skämtregister) som uppvärmning innan jag satte igång, vilket gjorde att
-jag redan kände igen mönstren - global variabel för att skicka data mellan
-funktioner, try/except runt API- och databasanrop, koppling mellan knapp och
-funktion.
+```bash
+pip install requests
+```
 
-Jag valde att bygga vidare på bibliotekstemat från tidigare uppgifter, men
-kopplade det mot Open Library API för riktig bokdata. Jag jobbade med
-pseudokod innan Python-kod, en funktion i taget, samma metod som fungerat
-genom hela kursen.
+### 4. Starta programmet
 
-Jag testade programmet löpande, inte bara i slutet, och hittade två buggar på
-vägen som jag rättade till innan inlämning:
+```bash
+python lararbedomd-uppgift-5.py
+```
 
-Den första: fönstret gick att krympa till nästan ingenting. Löste det med
-root.minsize(350, 400), så det fortfarande är resizable men inte oanvändbart.
+Databasfilen `bibliotek.db` skapas automatiskt första gången programmet körs.
 
-Den andra, mer intressant: jag upptäckte att programmet sparade mitt sökord
-som titel istället för bokens riktiga titel (t.ex. sökte jag "Linux" sparades
-"Linux" i databasen, inte "Linux For Dummies"). Det berodde på att titeln
-lästes direkt från textfältet i spara-funktionen, istället för från API-
-svaret. Jag åtgärdade det genom att hämta ut det riktiga title-fältet från
-API:t och spara det tillsammans med författare och år i samma variabel. Det
-löste också ett andra problem jag inte tänkt på från början: om man ändrade
-textfältet efter en hämtning men innan man sparade kunde fel författare/år
-hamna ihop med fel titel. Efter fixen kommer titel, författare och år alltid
-från samma hämtning, så det problemet kan inte längre uppstå.
+## Användning
 
-Kopplat till Peters kommentar på uppgift 4 (kontrollera att titel/författare
-inte lämnas tomma): i den här uppgiften hämtas författare automatiskt från
-API:t med ett fallback-värde ("Okänd") om det saknas, så det fältet kan
-aldrig bli tomt. Titel kommer numera alltid från API-svaret, av samma skäl.
+1. Skriv en boktitel i sökfältet.
+2. Välj **Hämta bok**.
+3. Kontrollera titel, författare och utgivningsår.
+4. Välj lässtatus.
+5. Välj **Spara bok**.
+6. Använd **Visa böcker** för att se hela registret eller filtrera med ett sökord.
+7. Ange ett bok-id och välj **Ta bort bok** för att radera posten.
 
-Det jag är mest nöjd med är att jag testade tillräckligt noga för att hitta
-titel-buggen själv, istället för att bara lämna in och hoppas att allt
-fungerade. Det känns som rätt vana att ta med sig vidare.
+## Kvalitet och felhantering
 
-Efter kursen är jag nyfiken på att titta på Kungliga bibliotekets (Libris)
-öppna API - mer komplext än Open Library (JSON-LD-format), men intressant att
-koppla till verkliga användningsfall i mitt företag, AI Swiftly.
+Projektet innehåller flera kontroller för att förbättra stabilitet och datakvalitet:
+
+- `.get()` används för att hantera fält som kan saknas i API-svaret.
+- Författare får reservvärdet `Okänd` om uppgiften saknas.
+- Titel, författare och år sparas från samma API-hämtning för att undvika felaktiga kombinationer.
+- Fönstret har en minsta storlek så att gränssnittet förblir användbart.
+- Programmet testades löpande under utvecklingen och fel rättades före färdigställandet.
+
+## Viktiga lärdomar
+
+Projektet gav praktisk erfarenhet av att:
+
+- analysera och bryta ned ett programmeringsproblem,
+- arbeta pseudokod-first innan implementering,
+- strukturera ett program i tydliga funktioner,
+- tolka nästlad JSON från ett externt API,
+- koppla ett grafiskt gränssnitt till programlogik,
+- lagra och hantera data i SQLite,
+- felsöka samband mellan användarinmatning, API-data och databaslagring,
+- skriva mer läsbar, testbar och dokumenterad kod.
+
+## Skärmbild
+
+Lägg gärna en skärmbild av applikationen i `docs/images/` och använd följande Markdown:
+
+```markdown
+![Mitt Bibliotek, grafiskt gränssnitt för boksökning och lokal lagring](docs/images/mitt-bibliotek.png)
+```
+
+## Dataskydd
+
+Applikationen använder offentlig bokinformation från Open Library API. Sparade bokposter lagras lokalt i `bibliotek.db`. Repot ska inte innehålla lösenord, API-nycklar, privata personuppgifter eller andra hemligheter.
+
+## Fortsatt utveckling
+
+Möjliga nästa steg:
+
+- stöd för flera träffar från samma sökning,
+- redigering av sparade poster,
+- export och import av boklistor,
+- förbättrad validering och automatiserade tester,
+- jämförelse med Kungliga bibliotekets öppna Libris API,
+- paketering av applikationen för enklare installation.
+
+## Bakgrund
+
+Projektet utvecklades som avslutande arbete inom **Programmering nivå 2, 100 poäng**, med Python som programspråk. Fokus låg på objektorienterat och strukturerat utvecklingsarbete, fil- och databashantering, API-kommunikation, grafiskt gränssnitt, testning, felsökning och dokumentation.
